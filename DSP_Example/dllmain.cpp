@@ -2,7 +2,12 @@
 
 * Author:
 * Ali A. Naseri
+* 
+	Important note : Read the LICENSE file
 
+	This example has been created solely for demonstrating an issue with dynamic allocated variables.
+	You may want to use fmod's provided examples as learning resources. 
+* 
 * HOW TO BUILD?
 
 * Set Solution Configuration as Debug and Solution Platform as x64
@@ -157,8 +162,8 @@ private:
 
 StateClass::StateClass()
 {
-	srand(time(NULL));
-
+	srand(time(NULL)); //for generating random seed for later works
+	EngineRPM = 0.f;
 }
 
 StateClass::~StateClass()
@@ -180,7 +185,7 @@ void StateClass::GenerateSound(float* Outbuffer, unsigned int Length, int Channe
 		Outbuffer[i] = 0.f;
 	}
 
-		FMOD_DSP_LOG(dsp, FMOD_DEBUG_LEVEL_WARNING, "RPM  :  ", "%f", EngineRPM);
+	FMOD_DSP_LOG(dsp, FMOD_DEBUG_LEVEL_WARNING, "RPM  :  ", "%f", EngineRPM);
 
 }
 
