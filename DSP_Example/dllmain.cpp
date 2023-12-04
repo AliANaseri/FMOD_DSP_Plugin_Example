@@ -147,23 +147,25 @@ public:
 	StateClass();
 	~StateClass();
 
-	void reset(FMOD_DSP_STATE* dsp);
+	void reset(/*FMOD_DSP_STATE* dsp*/);
 
 	//WaveFileStructure WaveFile;
 	void GenerateSound(float* Oubuffer, unsigned int length, int channels, FMOD_DSP_STATE* dsp);
 
-	void SetRPM(float NewRPM) { /*if (FakeRPM) { *FakeRPM = NewRPM; }*/ EngineRPM = NewRPM; }
-	float GetRPM() { return EngineRPM; }
+	void SetRPM(float NewRPM) { if (EngineRPM) { EngineRPM[0] = NewRPM; } else { reset(); EngineRPM[0] = NewRPM; } }
+	float GetRPM() { if (EngineRPM) { return EngineRPM[0]; } else { return 99999.f; } }
 
 private:
-	float EngineRPM;
+	float* EngineRPM;
 
 };
 
 StateClass::StateClass()
 {
 	srand(time(NULL)); //for generating random seed for later works
-	EngineRPM = 0.f;
+	EngineRPM = new float[1];
+
+	EngineRPM[0] = 0.f;
 }
 
 StateClass::~StateClass()
@@ -171,9 +173,11 @@ StateClass::~StateClass()
 	
 }
 
-void StateClass::reset(FMOD_DSP_STATE* dsp)
+void StateClass::reset(/*FMOD_DSP_STATE* dsp*/)
 {
-
+	delete[] EngineRPM;
+	EngineRPM = nullptr;
+	EngineRPM = new float[1];
 }
 
 void StateClass::GenerateSound(float* Outbuffer, unsigned int Length, int Channels, FMOD_DSP_STATE* dsp)
@@ -185,7 +189,7 @@ void StateClass::GenerateSound(float* Outbuffer, unsigned int Length, int Channe
 		Outbuffer[i] = 0.f;
 	}
 
-	FMOD_DSP_LOG(dsp, FMOD_DEBUG_LEVEL_WARNING, "RPM  :  ", "%f", EngineRPM);
+	FMOD_DSP_LOG(dsp, FMOD_DEBUG_LEVEL_WARNING, "RPM  :  ", "%f", GetRPM());
 
 }
 
@@ -244,7 +248,7 @@ FMOD_RESULT F_CALLBACK DspExampleResetDSP(FMOD_DSP_STATE* dsp)
 {
 	//FMOD_DSP_LOG(dsp, FMOD_DEBUG_LEVEL_WARNING, "FMOD RESET", "");
 	StateClass* state = (StateClass*)dsp->plugindata;
-	state->reset(dsp);
+	state->reset(/*dsp*/);
 	return FMOD_OK;
 }
 
